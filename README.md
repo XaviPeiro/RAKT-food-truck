@@ -1,6 +1,8 @@
 # RAKT-food-truck
 
 # 🧠 Considerations
+- I planned to take the first 10 food trucks from postgis (geo distance) and then request the "walking time" 
+to gmaps to utterly return the first 5. However, I got problems getting a Billable Account, so no G Maps API-KEY 🤷.
 - I will assume "permit" is the data that identifies the "food-truck". However:
   - In the dataset there are **different locations for the same food-truck** and **"dayshours" are NaN**, therefore:
     - I am **cleaning the dataset** and leaving **only one location per food-truck (i.e.: permit)**.
