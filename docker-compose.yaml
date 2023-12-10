@@ -1,0 +1,58 @@
+version: "3.3"
+
+volumes:
+  postgis-db-vol: {}
+  pgadmin-data: {}
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    volumes:
+      - .:/app
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgis-db:
+        condition: service_healthy
+    command: /start.sh
+    stdin_open: true
+    tty: true
+
+  postgis-db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysuperpass
+      POSTGRES_DB: RAKT
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis-db-vol:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    expose:
+      - "80"
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pg@domain.com
+      PGADMIN_DEFAULT_PASSWORD: mysuperpass
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+
+
+
